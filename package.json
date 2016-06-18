@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "webpack --config webpack.conf.js && node index.js",
     "wds": "webpack-dev-server --content-base public --port 80 --config webpack.conf.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
