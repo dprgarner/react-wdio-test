@@ -100,8 +100,16 @@ let CommentBox = React.createClass({
     },
 
     handleCommentSubmit(comment) {
-        // TODO: Send request
-        console.log(comment);
+        $.post({
+            url: this.props.url,
+            data: comment,
+            success: function (data) {
+                this.setState({data});
+            }.bind(this),
+            error: function (_xhr, status, err) {
+                console.err(this.props.url, status, err.toString());
+            }.bind(this),
+        });
     },
 
     componentDidMount() {

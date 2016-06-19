@@ -41,19 +41,21 @@ app.get('/api/comments', function (req, res) {
 });
 
 app.post('/api/comments', function (req, res) {
-    let comments;
+    let comments, newComment;
     checkFileExists(COMMENTS_FILE)
         .then(() => fs.readFile(COMMENTS_FILE))
         .then(function (data) {
-            comments = JSON.parse(data);
-            comments.push({
+            newComment = {
                 id: Date.now(),
                 author: req.body.author,
                 text: req.body.text,
-            });
+            };
+            comments = JSON.parse(data);
+            comments.push(newComment);
             return fs.writeFile(COMMENTS_FILE, JSON.stringify(comments));
         })
         .then(function () {
+            console.log(newComment);
             res.json(comments);
         })
         .catch(function (err) {
