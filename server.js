@@ -1,8 +1,11 @@
-import fs from 'fs';
+// import fs from 'fs';
 import path from 'path';
 
 import express from 'express';
 import bodyParser from 'body-parser';
+import promisify from 'promisify-node';
+
+let fs = promisify('fs');
 
 let app = express();
 const COMMENTS_FILE = path.join(__dirname, 'comments.json');
@@ -19,35 +22,30 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/comments', function (req, res) {
-    fs.readFile(COMMENTS_FILE, function (err, data) {
-        if (err) {
-            console.error(err);
-            process.exit(1);
-        }
+    fs.readFile(COMMENTS_FILE).then(function (data) {
         res.json(JSON.parse(data));
+    }).catch(function (err) {
+        console.error(err);
+        process.exit(1);
     });
 });
 
 app.post('/api/comments', function (req, res) {
-    fs.readFile(COMMENTS_FILE, function (err, data) {
-        if (err) {
-            console.error(err);
-            process.exit(1);
-        }
-        var comments = JSON.parse(data);
-        var newComment = {
+    let comments;
+    fs.readFile(COMMENTS_FILE).then(function (data) {
+        comments = JSON.parse(data);
+        comments.push({
             id: Date.now(),
             author: req.body.author,
             text: req.body.text,
-        };
-        comments.push(newComment);
-        fs.writeFile(COMMENTS_FILE, JSON.stringify(comments), function (err) {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-            res.json(comments);
         });
+        return fs.writeFile(COMMENTS_FILE, JSON.stringify(comments));
+    }).then(function () {
+        res.json(comments);
+    })
+    .catch(function (err) {
+        console.error(err);
+        process.exit(1);
     });
 });
 

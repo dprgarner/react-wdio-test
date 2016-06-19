@@ -1,3 +1,4 @@
 node_modules
 *.lnk
 public/bundle.js
+comments.json
