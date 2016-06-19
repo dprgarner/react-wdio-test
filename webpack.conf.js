@@ -4,16 +4,23 @@ module.exports = {
     entry: {
         app: ['./src/index.js'],
     },
-    module: {
-        loaders: [{
+    module: {loaders: [
+        {
             test: /\.js$/,
             exclude: /(node_modules)/,
             loader: 'babel',
             query: {
                 presets: ['es2015'],
             },
-        }],
-    },
+        },
+        {
+            test: /\.jsx$/,
+            loader: 'babel',
+            query: {
+                presets: ['react', 'es2015'],
+            },
+        }
+    ]},
     output: {
         path: path.resolve(__dirname, 'public'),
         filename: 'bundle.js',
