@@ -94,12 +94,16 @@ let CommentBox = React.createClass({
                 this.setState({data});
             }.bind(this),
             error: function (_xhr, status, err) {
-                console.err(this.props.url, status, err.toString());
+                console.error(this.props.url, status, err.toString());
             }.bind(this),
         });
     },
 
     handleCommentSubmit(comment) {
+        let comments = this.state.data;
+        comment.id = null // Fake id
+        let newComments = comments.concat([comment]);
+        this.setState({data: newComments});
         $.post({
             url: this.props.url,
             data: comment,
@@ -107,7 +111,8 @@ let CommentBox = React.createClass({
                 this.setState({data});
             }.bind(this),
             error: function (_xhr, status, err) {
-                console.err(this.props.url, status, err.toString());
+                this.setState({data: comments});
+                console.error(this.props.url, status, err.toString());
             }.bind(this),
         });
     },
