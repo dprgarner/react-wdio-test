@@ -3,5 +3,5 @@ import reactApp from './react.jsx';
 
 $(function () {
     window.$ = $;
-    reactApp($('main'));
+    reactApp($('main')[0]);
 });
