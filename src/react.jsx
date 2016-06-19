@@ -1,11 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Remarkable from 'remarkable';
-
-let data = [
-    {id: 1, author: "Becky", text: "This is a comment"},
-    {id: 2, author: "David", text: "This is *another* comment"},
-]
+import $ from 'jquery';
 
 let Comment = React.createClass({
     rawMarkup() {
@@ -52,11 +48,35 @@ let CommentForm = React.createClass({
 });
 
 let CommentBox = React.createClass({
+    getInitialState() {
+        return {data: []};
+    },
+
+    loadCommentsFromServer() {
+        $.get({
+            url: this.props.url,
+            cache: false,
+            success: function (data) {
+                this.setState({data});
+            }.bind(this),
+            error: function (_xhr, status, err) {
+                console.err(this.props.url, status, err.toString());
+            }.bind(this),
+        });
+    },
+
+    componentDidMount() {
+        this.loadCommentsFromServer();
+        this.interval = setInterval(
+            this.loadCommentsFromServer, this.props.pollInterval
+        )
+    },
+
     render() {
         return (
             <div className="commentBox">
                 <h1>Comments</h1>
-                <CommentList data={this.props.data} />
+                <CommentList data={this.state.data} />
                 <CommentForm />
             </div>
         );
@@ -64,5 +84,7 @@ let CommentBox = React.createClass({
 });
 
 export default function(el) {
-    ReactDOM.render(<CommentBox data={data} />, el);
+    ReactDOM.render(
+        <CommentBox url='/api/comments' pollInterval={2000}/>, el
+    );
 }
