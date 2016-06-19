@@ -1,9 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
-var app = express();
-var urlEncodedParser = bodyParser.urlencoded({extended: false});
-var port = 80;
+let app = express();
+let urlEncodedParser = bodyParser.urlencoded({extended: false});
+const PORT = 80;
 
 app.use(express.static('public'));
 
@@ -13,6 +13,6 @@ app.post('/api', urlEncodedParser, function (req, res) {
     res.send(`Welcome ${req.body.username}!`);
 });
 
-app.listen(port, function () {
-    console.log(`App listening on port ${port}`);
+app.listen(PORT, function () {
+    console.log(`App listening on port ${PORT}`);
 });

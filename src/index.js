@@ -1,7 +1,6 @@
 import $ from 'jquery';
+import reactApp from './react.jsx';
 
 $(function () {
-    $('main').html('Hi!');
-
-    $.post('/api', {'username': 'world'});
+    reactApp($('main'));
 });
