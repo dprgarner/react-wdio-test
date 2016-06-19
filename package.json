@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "start": "nodemon -e js,jsx -w src -w server.js --exec \"webpack --config webpack.conf.js && babel-node server.js --presets es2015\"",
+    "build": "webpack --config webpack.conf.js && babel src -d dist --presets es2015",
+    "serve": "node dist/server.js",
+    "start": "nodemon -e js,jsx -w src -w www --exec \"npm run build && npm run serve\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

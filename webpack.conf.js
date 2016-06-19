@@ -2,7 +2,7 @@ var path = require('path');
 
 module.exports = {
     entry: {
-        app: ['./src/react.jsx'],
+        app: ['./www/react.jsx'],
     },
     module: {loaders: [
         {
