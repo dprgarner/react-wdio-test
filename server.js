@@ -1,12 +1,12 @@
 // import fs from 'fs';
 import path from 'path';
 
-import express from 'express';
 import bodyParser from 'body-parser';
+import express from 'express';
 import promisify from 'promisify-node';
 
-let fs = promisify('fs');
 let app = express();
+let fs = promisify('fs');
 const COMMENTS_FILE = path.join(__dirname, 'comments.json');
 const PORT = 80;
 

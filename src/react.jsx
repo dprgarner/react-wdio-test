@@ -1,14 +1,27 @@
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Remarkable from 'remarkable';
-import $ from 'jquery';
 
-let Comment = React.createClass({
+class BaseComponent extends React.Component {
+    _bind(...methods) {
+        methods.forEach(
+            (method) => this[method] = this[method].bind(this)
+        );
+    }
+}
+
+class Comment extends BaseComponent {
+    constructor() {
+        super();
+        this._bind('rawMarkup', 'render');
+    }
+
     rawMarkup() {
         let md = new Remarkable();
         let rawMarkup = md.render(this.props.children.toString());
         return {__html: rawMarkup};
-    },
+    }
 
     render() {
         return (
@@ -20,9 +33,14 @@ let Comment = React.createClass({
             </div>
         );
     }
-});
+}
 
-let CommentList = React.createClass({
+class CommentList extends BaseComponent {
+    constructor() {
+        super();
+        this._bind('render');
+    }
+
     render() {
         let commentNodes = this.props.data.map((comment) => (
             <Comment key={comment.id} author={comment.author}>
@@ -35,22 +53,29 @@ let CommentList = React.createClass({
             </div>
         );
     }
-});
+}
 
-let CommentForm = React.createClass({
-    getInitialState() {
-        return {author: '', text: ''};
-    },
+class CommentForm extends BaseComponent {
+    constructor() {
+        super();
+        this._bind(
+            'handleAuthorChange',
+            'handleTextChange',
+            'handleSubmit',
+            'render'
+        );
+        this.state = {author: '', text: ''};
+    }
 
-    handleAuthorChange: function (e) {
+    handleAuthorChange(e) {
         this.setState({author: e.target.value});
-    },
+    }
 
-    handleTextChange: function (e) {
+    handleTextChange(e) {
         this.setState({text: e.target.value});
-    },
+    }
 
-    handleSubmit: function (e) {
+    handleSubmit(e) {
         e.preventDefault();
         var author = this.state.author.trim();
         var text = this.state.text.trim();
@@ -58,7 +83,7 @@ let CommentForm = React.createClass({
 
         this.props.onCommentSubmit({author, text});
         this.setState({author: '', text: ''});
-    },
+    }
 
     render() {
         return (
@@ -79,12 +104,24 @@ let CommentForm = React.createClass({
             </form>
         );
     }
-});
+}
 
-let CommentBox = React.createClass({
-    getInitialState() {
-        return {data: []};
-    },
+class CommentBox extends BaseComponent {
+    constructor() {
+        super();
+        this._bind(
+            'componentDidMount',
+            'loadCommentsFromServer',
+            'handleCommentSubmit',
+            'render'
+        );
+        this.state = {data: []};
+    }
+
+    componentDidMount() {
+        this.loadCommentsFromServer();
+        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+    }
 
     loadCommentsFromServer() {
         $.get({
@@ -97,7 +134,7 @@ let CommentBox = React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this),
         });
-    },
+    }
 
     handleCommentSubmit(comment) {
         let comments = this.state.data;
@@ -115,12 +152,7 @@ let CommentBox = React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this),
         });
-    },
-
-    componentDidMount() {
-        this.loadCommentsFromServer();
-        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
-    },
+    }
 
     render() {
         return (
@@ -131,7 +163,7 @@ let CommentBox = React.createClass({
             </div>
         );
     }
-});
+}
 
 export default function(el) {
     ReactDOM.render(
