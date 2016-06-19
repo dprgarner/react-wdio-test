@@ -6,7 +6,7 @@ import Remarkable from 'remarkable';
 class BaseComponent extends React.Component {
     constructor() {
         super();
-        // Mostly pinched from stackOverflow
+        // Binds class methods to the context. Mostly pinched from stackOverflow.
         for (let name of Object.getOwnPropertyNames(Object.getPrototypeOf(this))) {
             let method = this[name];
             if (!(method instanceof Function) || method === this.constructor) continue;
@@ -147,8 +147,9 @@ class CommentBox extends BaseComponent {
     }
 }
 
-export default function(el) {
+// Initialise the app
+$(function () {
     ReactDOM.render(
-        <CommentBox url='/api/comments' pollInterval={2000}/>, el
+        <CommentBox url='/api/comments' pollInterval={2000}/>, $('main')[0]
     );
-}
+});
