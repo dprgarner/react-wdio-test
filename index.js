@@ -10,7 +10,7 @@ app.use(express.static('public'));
 app.post('/api', urlEncodedParser, function (req, res) {
     if (!req.body) return res.sendStatus(400);
     console.log(req.body);
-    res.send(`Welcome ${req.body.username}`);
+    res.send(`Welcome ${req.body.username}!`);
 });
 
 app.listen(port, function () {

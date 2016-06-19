@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack --config webpack.conf.js && babel-node index.js --presets es2015",
-    "wds": "webpack-dev-server --content-base public --port 80 --config webpack.conf.js",
+    "start": "nodemon -w src -w index.js --exec \"webpack --config webpack.conf.js && babel-node index.js --presets es2015\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -17,7 +16,7 @@
     "body-parser": "^1.15.1",
     "express": "^4.14.0",
     "jquery": "^3.0.0",
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1"
+    "nodemon": "^1.9.2",
+    "webpack": "^1.13.1"
   }
 }
