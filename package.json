@@ -2,9 +2,8 @@
   "name": "my-react",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "nodemon -w src -w index.js --exec \"webpack --config webpack.conf.js && babel-node index.js --presets es2015\"",
+    "start": "nodemon -w src -w server.js --exec \"webpack --config webpack.conf.js && babel-node server.js --presets es2015\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
