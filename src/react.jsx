@@ -1,21 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-/*
-- CommentBox
-  - CommentList
-    - Comment
-  - CommentForm
-*/
+import Remarkable from 'remarkable';
 
 let Comment = React.createClass({
+    rawMarkup() {
+        let md = new Remarkable();
+        let rawMarkup = md.render(this.props.children.toString());
+        return {__html: rawMarkup};
+    },
+
     render() {
         return (
             <div className="comment">
                 <h2 className="commentAuthor">
                     {this.props.author}
                 </h2>
-                {this.props.children}
+                <span dangerouslySetInnerHTML={this.rawMarkup()} />
             </div>
         );
     }
@@ -27,7 +27,7 @@ let CommentList = React.createClass({
             <div className="commentList">
                 <Comment author="David">This is a comment</Comment>
                 <Comment author="Becky">This is aother comment</Comment>
-            </div>  
+            </div>
         );
     }
 });
