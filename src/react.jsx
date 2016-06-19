@@ -7,6 +7,7 @@ class BaseComponent extends React.Component {
     constructor() {
         super();
         // Binds class methods to the context. Mostly pinched from stackOverflow.
+        // If this messes up, just define methods with arrow functions.
         for (let name of Object.getOwnPropertyNames(Object.getPrototypeOf(this))) {
             let method = this[name];
             if (!(method instanceof Function) || method === this.constructor) continue;
