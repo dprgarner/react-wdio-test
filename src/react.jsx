@@ -4,19 +4,18 @@ import ReactDOM from 'react-dom';
 import Remarkable from 'remarkable';
 
 class BaseComponent extends React.Component {
-    _bind(...methods) {
-        methods.forEach(
-            (method) => this[method] = this[method].bind(this)
-        );
+    constructor() {
+        super();
+        // Mostly pinched from stackOverflow
+        for (let name of Object.getOwnPropertyNames(Object.getPrototypeOf(this))) {
+            let method = this[name];
+            if (!(method instanceof Function) || method === this.constructor) continue;
+            this[name] = this[name].bind(this);
+        }
     }
 }
 
 class Comment extends BaseComponent {
-    constructor() {
-        super();
-        this._bind('rawMarkup', 'render');
-    }
-
     rawMarkup() {
         let md = new Remarkable();
         let rawMarkup = md.render(this.props.children.toString());
@@ -36,11 +35,6 @@ class Comment extends BaseComponent {
 }
 
 class CommentList extends BaseComponent {
-    constructor() {
-        super();
-        this._bind('render');
-    }
-
     render() {
         let commentNodes = this.props.data.map((comment) => (
             <Comment key={comment.id} author={comment.author}>
@@ -58,12 +52,6 @@ class CommentList extends BaseComponent {
 class CommentForm extends BaseComponent {
     constructor() {
         super();
-        this._bind(
-            'handleAuthorChange',
-            'handleTextChange',
-            'handleSubmit',
-            'render'
-        );
         this.state = {author: '', text: ''};
     }
 
@@ -109,12 +97,6 @@ class CommentForm extends BaseComponent {
 class CommentBox extends BaseComponent {
     constructor() {
         super();
-        this._bind(
-            'componentDidMount',
-            'loadCommentsFromServer',
-            'handleCommentSubmit',
-            'render'
-        );
         this.state = {data: []};
     }
 
