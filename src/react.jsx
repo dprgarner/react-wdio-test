@@ -38,11 +38,45 @@ let CommentList = React.createClass({
 });
 
 let CommentForm = React.createClass({
+    getInitialState() {
+        return {author: '', text: ''};
+    },
+
+    handleAuthorChange: function (e) {
+        this.setState({author: e.target.value});
+    },
+
+    handleTextChange: function (e) {
+        this.setState({text: e.target.value});
+    },
+
+    handleSubmit: function (e) {
+        e.preventDefault();
+        var author = this.state.author.trim();
+        var text = this.state.text.trim();
+        if (!text || !author) return;
+
+        this.props.onCommentSubmit({author, text});
+        this.setState({author: '', text: ''});
+    },
+
     render() {
         return (
-            <div className="commentForm">
-                Hello! CommentForm here.
-            </div>  
+            <form className="commentForm" onSubmit={this.handleSubmit}>
+                <input
+                    type="text"
+                    placeholder="Your name..."
+                    value={this.state.author}
+                    onChange={this.handleAuthorChange}
+                />
+                <input
+                    type="text"
+                    placeholder="Say something..."
+                    value={this.state.text}
+                    onChange={this.handleTextChange}
+                />
+                <input type="submit" value="Post"/>
+            </form>
         );
     }
 });
@@ -65,11 +99,14 @@ let CommentBox = React.createClass({
         });
     },
 
+    handleCommentSubmit(comment) {
+        // TODO: Send request
+        console.log(comment);
+    },
+
     componentDidMount() {
         this.loadCommentsFromServer();
-        this.interval = setInterval(
-            this.loadCommentsFromServer, this.props.pollInterval
-        )
+        setInterval(this.loadCommentsFromServer, this.props.pollInterval);
     },
 
     render() {
@@ -77,7 +114,7 @@ let CommentBox = React.createClass({
             <div className="commentBox">
                 <h1>Comments</h1>
                 <CommentList data={this.state.data} />
-                <CommentForm />
+                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
             </div>
         );
     }
