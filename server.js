@@ -6,10 +6,16 @@ import bodyParser from 'body-parser';
 import promisify from 'promisify-node';
 
 let fs = promisify('fs');
-
 let app = express();
 const COMMENTS_FILE = path.join(__dirname, 'comments.json');
 const PORT = 80;
+
+function checkFileExists(filePath) {
+    return fs.access(filePath, fs.F_OK).catch(function (err) {
+        if (err.code !== 'ENOENT') throw err;
+        return fs.writeFile(COMMENTS_FILE, '[]', 'utf8');
+    });
+}
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -22,9 +28,12 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/comments', function (req, res) {
-    fs.readFile(COMMENTS_FILE).then(function (data) {
+    checkFileExists(COMMENTS_FILE)
+    .then(() => fs.readFile(COMMENTS_FILE))
+    .then(function (data) {
         res.json(JSON.parse(data));
-    }).catch(function (err) {
+    })
+    .catch(function (err) {
         console.error(err);
         process.exit(1);
     });
@@ -32,7 +41,9 @@ app.get('/api/comments', function (req, res) {
 
 app.post('/api/comments', function (req, res) {
     let comments;
-    fs.readFile(COMMENTS_FILE).then(function (data) {
+    checkFileExists(COMMENTS_FILE)
+    .then(() => fs.readFile(COMMENTS_FILE))
+    .then(function (data) {
         comments = JSON.parse(data);
         comments.push({
             id: Date.now(),
@@ -40,7 +51,8 @@ app.post('/api/comments', function (req, res) {
             text: req.body.text,
         });
         return fs.writeFile(COMMENTS_FILE, JSON.stringify(comments));
-    }).then(function () {
+    })
+    .then(function () {
         res.json(comments);
     })
     .catch(function (err) {
