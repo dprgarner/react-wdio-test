@@ -1,4 +1,3 @@
-// import fs from 'fs';
 import path from 'path';
 
 import bodyParser from 'body-parser';
@@ -21,16 +20,17 @@ app.use(function (req, res, next) {
 });
 
 // Creates empty comments file if it doesn't exist
-function checkFileExists(filePath) {
-    return fs.access(filePath, fs.F_OK).catch(function (err) {
-        if (err.code !== 'ENOENT') throw err;
-        return fs.writeFile(COMMENTS_FILE, '[]', 'utf8');
-    });
+function loadComments() {
+    return fs.access(COMMENTS_FILE, fs.F_OK)
+        .then(() => fs.readFile(COMMENTS_FILE))
+        .catch(function (err) {
+            if (err.code !== 'ENOENT') throw err;
+            return Promise.resolve('[]');
+        })
 }
 
 app.get('/api/comments', function (req, res) {
-    checkFileExists(COMMENTS_FILE)
-        .then(() => fs.readFile(COMMENTS_FILE))
+    loadComments()
         .then(function (data) {
             res.json(JSON.parse(data));
         })
@@ -42,8 +42,7 @@ app.get('/api/comments', function (req, res) {
 
 app.post('/api/comments', function (req, res) {
     let comments, newComment;
-    checkFileExists(COMMENTS_FILE)
-        .then(() => fs.readFile(COMMENTS_FILE))
+    loadComments()
         .then(function (data) {
             newComment = {
                 id: Date.now(),

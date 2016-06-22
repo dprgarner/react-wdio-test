@@ -1,6 +1,6 @@
 {
-  "name": "my-react",
-  "version": "0.0.0",
+  "name": "react-test",
+  "version": "1.0.0",
   "description": "",
   "scripts": {
     "build": "webpack --config webpack.conf.js && babel src -d dist --presets es2015",
