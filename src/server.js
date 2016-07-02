@@ -24,9 +24,9 @@ function loadComments() {
     return fs.access(COMMENTS_FILE, fs.F_OK)
         .then(() => fs.readFile(COMMENTS_FILE))
         .catch(function (err) {
-            if (err.code !== 'ENOENT') throw err;
-            return Promise.resolve('[]');
-        })
+            if (err.code === 'ENOENT') return Promise.resolve('[]');
+            throw err;
+        });
 }
 
 app.get('/api/comments', function (req, res) {
@@ -51,7 +51,9 @@ app.post('/api/comments', function (req, res) {
             };
             comments = JSON.parse(data);
             comments.push(newComment);
-            return fs.writeFile(COMMENTS_FILE, JSON.stringify(comments));
+            return fs.writeFile(
+                COMMENTS_FILE, JSON.stringify(comments, null, 2)
+            );
         })
         .then(function () {
             console.log(newComment);
