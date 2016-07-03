@@ -1,9 +1,13 @@
-var gulp = require('gulp');
-var webpack = require('webpack');
-var gutil = require('gulp-util');
 var babel = require('gulp-babel');
+var gulp = require('gulp');
+var gutil = require('gulp-util');
+var selenium = require('selenium-standalone');
+var webpack = require('webpack');
 
-gulp.task('build', ['webpack', 'babelServer']);
+var PORT = 80;
+var server = null;
+
+gulp.task('build', ['webpack', 'babel']);
 
 gulp.task('webpack', function (done) {
     webpack(require('./webpack.conf.js'), function(err, stats) {
@@ -17,10 +21,33 @@ gulp.task('webpack', function (done) {
     });
 });
 
-gulp.task('babelServer', function () {
+gulp.task('babel', function () {
     return gulp.src('src/*')
         .pipe(babel({
             presets: ['es2015']
         }))
         .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('serve', ['build'], function (done) {
+    server = require('./dist/server').listen(PORT, done);
+});
+
+gulp.task('selenium', function (done) {
+    selenium.start(function (err, child) {
+        selenium.child = child;
+        done(err);
+    });
+});
+
+// Boot up a selenium and live server, run the e2e tests, and exit servers
+gulp.task('test', ['selenium', 'serve'], function () {
+    selenium.child.kill();
+    server.close();
+    // return gulp.src('wdio.conf.js')
+    //     .pipe(webdriver())
+    //     .on('end', function () {
+    //         selenium.child.kill();
+    //         liveServer.shutdown();
+    //     });
 });

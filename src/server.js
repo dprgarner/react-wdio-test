@@ -1,4 +1,5 @@
 import path from 'path';
+import http from 'http';
 
 import bodyParser from 'body-parser';
 import express from 'express';
@@ -7,7 +8,6 @@ import promisify from 'promisify-node';
 let app = express();
 let fs = promisify('fs');
 const COMMENTS_FILE = path.join(__dirname, '..', 'comments.json');
-const PORT = 80;
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -65,6 +65,5 @@ app.post('/api/comments', function (req, res) {
         });
 });
 
-app.listen(PORT, function () {
-    console.log(`App listening on port ${PORT}`);
-});
+console.log('ccccccc');
+module.exports = app;
