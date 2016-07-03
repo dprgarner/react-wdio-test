@@ -1,5 +1,6 @@
 *.lnk
 comments.json
 dist
+errorShots
 node_modules
 public/bundle.js
