@@ -2,6 +2,7 @@ var babel = require('gulp-babel');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var selenium = require('selenium-standalone');
+var webdriver = require('gulp-webdriver');
 var webpack = require('webpack');
 
 var PORT = 80;
@@ -42,12 +43,10 @@ gulp.task('selenium', function (done) {
 
 // Boot up a selenium and live server, run the e2e tests, and exit servers
 gulp.task('test', ['selenium', 'serve'], function () {
-    selenium.child.kill();
-    server.close();
-    // return gulp.src('wdio.conf.js')
-    //     .pipe(webdriver())
-    //     .on('end', function () {
-    //         selenium.child.kill();
-    //         liveServer.shutdown();
-    //     });
+    return gulp.src('wdio.conf.js')
+        .pipe(webdriver())
+        .on('end', function () {
+            selenium.child.kill();
+            server.close();
+        });
 });

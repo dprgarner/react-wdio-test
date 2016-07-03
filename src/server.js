@@ -65,5 +65,4 @@ app.post('/api/comments', function (req, res) {
         });
 });
 
-console.log('ccccccc');
 module.exports = app;
