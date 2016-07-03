@@ -1,3 +1,4 @@
+var dateformat = require('dateformat')
 exports.config = {
     
     //
@@ -43,7 +44,8 @@ exports.config = {
         // grid with only 5 firefox instance available you can make sure that not more than
         // 5 instance gets started at a time.
         maxInstances: 1,
-        browserName: 'phantomjs'
+        browserName: 'phantomjs',
+        // browserName: 'chrome',
     }],
     //
     // ===================
@@ -167,8 +169,17 @@ exports.config = {
     // },
     //
     // Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
-    // afterTest: function (test) {
-    // },
+    afterTest: function (test) {
+        if (!test.passed) {
+            var screenshotLocation =
+                this.screenshotPath
+                + dateformat(new Date(), 'yy-mm-dd_HH-MM_')
+                + (test.parent + '_' + test.title).replace(/\s/g, '-')
+                + '.png';
+            console.log('Saved screenshot to ' + screenshotLocation);
+            browser.saveScreenshot(screenshotLocation);
+        }
+    },
     //
     // Hook that gets executed after the suite has ended
     // afterSuite: function (suite) {
