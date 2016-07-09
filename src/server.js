@@ -7,7 +7,9 @@ import promisify from 'promisify-node';
 
 let app = express();
 let fs = promisify('fs');
-const COMMENTS_FILE = path.join(__dirname, '..', 'comments.json');
+
+const fileName = (process.env.TEST) ? 'test_comments.json' : 'comments.json';
+const COMMENTS_FILE = path.join(__dirname, '..', fileName);
 
 app.use(express.static('public'));
 app.use(bodyParser.json());

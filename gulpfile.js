@@ -1,3 +1,6 @@
+var promisify = require('promisify-node');
+var fs = promisify('fs');
+
 var babel = require('gulp-babel');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -30,7 +33,7 @@ gulp.task('babel', function () {
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('serve', ['build'], function (done) {
+gulp.task('serve', ['babel'], function (done) {
     server = require('./dist/server').listen(PORT, done);
 });
 
@@ -42,11 +45,17 @@ gulp.task('selenium', function (done) {
 });
 
 // Boot up a selenium and live server, run the e2e tests, and exit servers
-gulp.task('test', ['selenium', 'serve'], function () {
+gulp.task('test', ['selenium', 'serve', 'webpack'], function () {
+    var COMMENTS_FILE = './test_comments.json';
     return gulp.src('wdio.conf.js')
         .pipe(webdriver())
         .on('end', function () {
             selenium.child.kill();
             server.close();
+            fs.access(COMMENTS_FILE, fs.F_OK)
+                .then(() => fs.unlink(COMMENTS_FILE))
+                .catch(function () {
+                    console.log('no comments file');
+                });
         });
 });
