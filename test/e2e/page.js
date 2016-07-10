@@ -24,13 +24,15 @@ describe('React app', function () {
     });
 
     it('can post a message', function () {
-        browser.url('http://localhost')
+        browser
+            .url('http://localhost')
+            .waitForExist('.commentForm input', 2000);
         expect(browser.elements('.comment').value.length).to.equal(0);
 
         browser
             .setValue('.commentForm input:first-child', 'Hello')
             .setValue('.commentForm input:nth-child(2)', 'World')
-            .submitForm('form')
+            .click('.commentForm input:last-child')
             .waitForText('h2');
 
         expect(browser.elements('.comment').value.length).to.equal(1);
@@ -39,7 +41,10 @@ describe('React app', function () {
     });
 
     it('keeps a message when reloading the page', function () {
-        browser.url('http://localhost')
+        browser
+            .url('http://localhost')
+            .waitForExist('.commentForm input', 2000);
+        browser
             .setValue('.commentForm input:first-child', 'Hello')
             .setValue('.commentForm input:nth-child(2)', 'World')
             .submitForm('form')
@@ -48,5 +53,32 @@ describe('React app', function () {
         expect(browser.elements('.comment').value.length).to.equal(1);
         expect(browser.getText('.comment h2')).to.contain('Hello');
         expect(browser.getText('.comment p')).to.contain('World');
+    });
+
+    it('refreshes the page when a different user posts', function () {
+        browser
+            .url('http://localhost')
+            .waitForExist('.commentForm input', 2000);
+        var firstTab = browser.getCurrentTabId();
+
+        browser
+            .newWindow('http://localhost')
+            .waitForExist('.commentForm input', 2000)
+        var secondTab = browser.getCurrentTabId();
+
+        expect(firstTab).to.not.equal(secondTab);
+
+        browser
+            .switchTab(firstTab)
+            .setValue('.commentForm input:first-child', 'FirstTab')
+            .setValue('.commentForm input:nth-child(2)', 'I am from the first tab')
+            .submitForm('form')
+
+        browser
+            .switchTab(secondTab)
+            .waitForText('h2');
+        expect(browser.elements('.comment').value.length).to.equal(1);
+        expect(browser.getText('.comment h2')).to.contain('FirstTab');
+        expect(browser.getText('.comment p')).to.contain('I am from the first tab');
     });
 });
