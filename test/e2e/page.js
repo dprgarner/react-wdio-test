@@ -4,6 +4,7 @@ var path = require('path');
 
 var COMMENTS_FILE = path.join(__dirname, '..', '..', 'test_comments.json');
 
+
 describe('React app', function () {
     afterEach(function (done) {
         fs.access(COMMENTS_FILE, fs.F_OK)
@@ -22,16 +23,14 @@ describe('React app', function () {
         expect(browser.getTitle()).to.contain('react');
     });
 
-    it('can post a message by clicking the button', function () {
+    it('can post a message', function () {
         browser.url('http://localhost')
         expect(browser.elements('.comment').value.length).to.equal(0);
 
         browser
-            .click('.commentForm input:first-child')
-            .keys('Hello')
-            .click('.commentForm input:nth-child(2)')
-            .keys('World')
-            .click('.commentForm input:last-child')
+            .setValue('.commentForm input:first-child', 'Hello')
+            .setValue('.commentForm input:nth-child(2)', 'World')
+            .submitForm('form')
             .waitForText('h2');
 
         expect(browser.elements('.comment').value.length).to.equal(1);
@@ -41,11 +40,9 @@ describe('React app', function () {
 
     it('keeps a message when reloading the page', function () {
         browser.url('http://localhost')
-            .click('.commentForm input:first-child')
-            .keys('Hello')
-            .click('.commentForm input:nth-child(2)')
-            .keys('World')
-            .click('.commentForm input:last-child')
+            .setValue('.commentForm input:first-child', 'Hello')
+            .setValue('.commentForm input:nth-child(2)', 'World')
+            .submitForm('form')
 
         browser.url('http://localhost');
         expect(browser.elements('.comment').value.length).to.equal(1);
