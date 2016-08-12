@@ -2,7 +2,7 @@ var path = require('path');
 
 module.exports = {
     entry: {
-        app: ['./www/react.jsx'],
+        app: ['./src_www/react.jsx'],
     },
     module: {loaders: [
         {
@@ -22,7 +22,7 @@ module.exports = {
         }
     ]},
     output: {
-        path: path.resolve(__dirname, 'public'),
+        path: path.resolve(__dirname, 'dist_www'),
         filename: 'bundle.js',
     },
 };

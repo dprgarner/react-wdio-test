@@ -1,6 +1,6 @@
 *.lnk
 comments.json
-dist
-errorShots
+error_shots
 node_modules
-public/bundle.js
+dist_server/**
+dist_www/bundle.js

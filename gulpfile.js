@@ -23,15 +23,15 @@ gulp.task('webpack', function (done) {
 });
 
 gulp.task('babel', function () {
-    return gulp.src('src/*')
+    return gulp.src('src_server/*')
         .pipe(babel({
             presets: ['es2015']
         }))
-        .pipe(gulp.dest('dist/'));
+        .pipe(gulp.dest('dist_server/'));
 });
 
 gulp.task('serve', ['babel'], function (done) {
-    server = require('./dist/server').listen(PORT, done);
+    server = require('./dist_server/server').listen(PORT, done);
 });
 
 gulp.task('selenium', function (done) {

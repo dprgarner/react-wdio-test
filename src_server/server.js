@@ -11,7 +11,7 @@ let fs = promisify('fs');
 const fileName = (process.env.TEST) ? 'test_comments.json' : 'comments.json';
 const COMMENTS_FILE = path.join(__dirname, '..', fileName);
 
-app.use(express.static('public'));
+app.use(express.static('dist_www'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
